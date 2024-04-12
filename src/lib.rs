@@ -115,7 +115,7 @@ impl Graph {
         dot.push_str(&self.layout_settings);
 
         for node in &self.node_list {
-            dot.push_str(&format!("{}\n", node.label));
+            dot.push_str(&format!("\t\"{}\"\n", node.label));
         }
 
         for edge in &self.edge_list {
