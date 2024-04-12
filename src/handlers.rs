@@ -1,6 +1,6 @@
 use std::io::{Read, Write};
 use std::process::{Command, Stdio};
-use log::{debug, trace};
+use log::{debug, error, trace, warn};
 use teloxide::dispatching::dialogue::InMemStorage;
 use teloxide::utils::command::BotCommands;
 use teloxide::prelude::*;
@@ -24,6 +24,12 @@ pub async fn start(
     dialogue: MyDialogue,
     msg: Message)
     -> Result<(), RequestError> {
+    if msg.text().is_none() {
+        warn!("User sent NOT MessageCommon, exit..");
+        bot.send_message(msg.chat.id, "It seems that you sent something suspicious to me...\n\
+        Please, don't do that🥺").await?;
+        return Ok(());
+    }
     trace!("This is message in start state: {}", msg.text().unwrap());
     bot.send_message(msg.chat.id, "Is your graph directed?(Y\\n)").await?;
 
@@ -89,12 +95,12 @@ pub async fn receive_image(
     // Creates an image from the DOT representation
     let photo = create_photo(dot)?;
 
-    trace!("Sending message response to user...");
+    trace!("Sending message response to user {:?}", msg.kind);
 
     // Reset dialogue state to the beginning
     dialogue.update(State::Start).await.unwrap();
     bot.send_photo(msg.chat.id, photo).await?;
-    
+
     Ok(())
 }
 
