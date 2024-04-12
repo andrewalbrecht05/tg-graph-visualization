@@ -45,6 +45,13 @@ pub async fn receive_image(
     msg_text: String,
     msg: Message)
     -> Result<(), RequestError> {
+    if msg.text().is_none() {
+        warn!("User sent NOT MessageCommon, exit..");
+        bot.send_message(msg.chat.id, "It seems that you sent something suspicious to me...\n\
+        Please, don't do that🥺").await?;
+        return Ok(());
+    }
+
     let direction_choice = msg.text().unwrap().trim();
     trace!("This is message in receive state: {}", direction_choice);
 
