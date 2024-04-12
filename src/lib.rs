@@ -59,7 +59,7 @@ impl Graph {
     /// * `list`:  The textual representation of the graph
     ///
     /// # Returns
-    /// * `Result<(), GraphSyntaxError>`:  
+    /// * `Result<(), GraphSyntaxError>`:
     ///    Returns Ok(()) on success, or a GraphSyntaxError if the parsing fails.
     pub fn try_parse(&mut self, list: impl Into<String>) -> Result<(), GraphSyntaxError> {
         self.edge_list.clear();

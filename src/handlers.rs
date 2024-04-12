@@ -26,7 +26,7 @@ pub async fn start(
     -> Result<(), RequestError> {
     trace!("This is message in start state: {}", msg.text().unwrap());
     bot.send_message(msg.chat.id, "Is your graph directed?(Y\\n)").await?;
-    
+
     // Passes to the next state
     dialogue.update(State::ReceiveImage { msg_text: msg.text().unwrap().to_string() }).await.unwrap();
     Ok(())
@@ -90,11 +90,11 @@ pub async fn receive_image(
     let photo = create_photo(dot)?;
 
     trace!("Sending message response to user...");
-    bot.send_photo(msg.chat.id, photo)
-        .await?;
 
     // Reset dialogue state to the beginning
     dialogue.update(State::Start).await.unwrap();
+    bot.send_photo(msg.chat.id, photo).await?;
+    
     Ok(())
 }
 
