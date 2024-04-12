@@ -1,6 +1,7 @@
 use std::cmp::max;
 use log::trace;
 use regex::Regex;
+use unicode_segmentation::UnicodeSegmentation;
 
 /// Represents a single node within a graph
 #[derive(Debug)]
@@ -79,19 +80,25 @@ impl Graph {
             let parts: Vec<&str> = Regex::new(r"\s+").unwrap().splitn(line, 3).collect();
             match parts[..] {
                 [node] => {
-                    if node.len() > 10 {
+                    if true_len(node) > 10 {
+                        trace!("LabelTooLargeError: expected 10, found {}", true_len(node));
                         return Err(GraphSyntaxError::LabelTooLargeError);
                     }
                     self.add_node(Node::new(node.to_string()))
                 }
                 [from, to] => {
-                    if max(from.len(), to.len()) > 10 {
+                    if max(true_len(from), true_len(to)) > 10 {
+                        trace!("LabelTooLargeError from: expected 10, found {}", true_len(from));
+                        trace!("LabelTooLargeError to: expected 10, found {}", true_len(to));
                         return Err(GraphSyntaxError::LabelTooLargeError);
                     }
                     self.add_edge(Edge::new(from.to_string(), to.to_string(), "".to_string()))
                 }
                 [from, to, label] => {
-                    if max(max(from.len(), to.len()), label.len()) > 10 {
+                    if max(max(true_len(from), true_len(to)), label.chars().count()) > 10 {
+                        trace!("LabelTooLargeError from: expected 10, found {}", true_len(from));
+                        trace!("LabelTooLargeError to: expected 10, found {}", true_len(to));
+                        trace!("LabelTooLargeError label: expected 10, found {}", true_len(label));
                         return Err(GraphSyntaxError::LabelTooLargeError);
                     }
                     self.add_edge(Edge::new(from.to_string(), to.to_string(), label.to_string()))
@@ -137,4 +144,8 @@ impl Graph {
 /// Helper function to count the number of lines in a string
 pub fn number_of_lines(str: &str) -> usize {
     str.split('\n').count()
+}
+
+pub fn true_len(str: &str) -> usize {
+    str.graphemes(true).count()
 }
