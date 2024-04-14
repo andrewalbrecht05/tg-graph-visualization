@@ -56,23 +56,21 @@ pub async fn receive_image(
     trace!("This is message in receive state: {}", direction_choice);
 
     // Parses the user's input to determine if the graph is directed
-    let directed: Option<bool> = match direction_choice.to_lowercase().as_str() {
-        "y" => Some(true),
-        "n" => Some(false),
-        _ => None
+    let directed: bool = match direction_choice.to_lowercase().as_str() {
+        "y" => true,
+        "n" => false,
+        _ => {
+            bot.send_message(msg.chat.id, "Invalid choice! Try again.(Y\\n)").await.unwrap();
+            return Ok(());
+        }
     };
-
-    if directed.is_none() {
-        bot.send_message(msg.chat.id, "Invalid choice! Try again.(Y\\n)").await.unwrap();
-        return Ok(());
-    }
 
     // Configures layout based on complexity
     let layout = String::from(if number_of_lines(&msg_text) <= 10 { "circo" } else { "neato" });
 
     // Creates a new Graph instance
     let mut graph = Graph::new(
-        directed.unwrap(),
+        directed,
         layout,
         String::from(""),
         stringify!(width=0.5 height=0.5 fontname="Arial").to_string(),
