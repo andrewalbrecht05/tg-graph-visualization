@@ -9,7 +9,7 @@ struct Node {
     label: String,
 }
 impl Node {
-    pub fn new(label: String) -> Self {
+    fn new(label: String) -> Self {
         Self { label }
     }
 }
@@ -22,7 +22,7 @@ struct Edge {
     label: String,
 }
 impl Edge {
-    pub fn new(from: String, to: String, label: String) -> Self {
+     fn new(from: String, to: String, label: String) -> Self {
         Self { from, to, label }
     }
 }
