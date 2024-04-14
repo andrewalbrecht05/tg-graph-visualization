@@ -113,6 +113,7 @@ impl Graph {
     ///
     /// # Returns
     /// A String containing the DOT representation
+    ///  
     pub fn to_dot(&self) -> String {
         let mut dot: String = if self.directed { "digraph".into() } else { "graph".into() };
         dot.push_str(" {\n");
