@@ -1,6 +1,6 @@
 use std::io::{Read, Write};
 use std::process::{Command, Stdio};
-use log::{debug, error, trace, warn};
+use log::{debug, trace, warn};
 use teloxide::dispatching::dialogue::InMemStorage;
 use teloxide::utils::command::BotCommands;
 use teloxide::prelude::*;
@@ -72,7 +72,7 @@ pub async fn receive_image(
     let mut graph = Graph::new(
         directed,
         layout,
-        String::from(""),
+        String::new(),
         stringify!(width=0.5 height=0.5 fontname="Arial").to_string(),
     );
     // Attempt to parse the graph representation from the user's message
@@ -98,7 +98,7 @@ pub async fn receive_image(
     let dot = graph.to_dot();
 
     // Creates an image from the DOT representation
-    let photo = create_photo(dot)?;
+    let photo = create_photo(&dot)?;
 
     trace!("Sending message response to user {:?}", msg.kind);
 
@@ -110,7 +110,7 @@ pub async fn receive_image(
 }
 
 /// Generates an image from the graph's DOT representation using Graphviz
-fn create_photo(dot: String) -> Result<InputFile, RequestError> {
+fn create_photo(dot: &str) -> Result<InputFile, RequestError> {
     let output = Command::new("dot")
         .arg("-Tpng")
         .stdin(Stdio::piped())
